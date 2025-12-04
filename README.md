@@ -1,27 +1,27 @@
 
-### 🔧 Instalare și rulare
+## 🔧 Instalare și rulare
 
-# 1. Instalează Python 3.10+
+ 1. Instalează Python 3.10+
 
-# 2. Clonează repo-ul:
+ 2. Clonează repo-ul:
 ```bash
 git clone https://github.com/AndreeaStati/Event-Planner-Qt.git
 cd Event-Planner-Qt/
 ```
 
-# 3. Creează și activează un mediu virtual
+ 3. Creează și activează un mediu virtual
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-# 4. Instalează dependențele
+ 4. Instalează dependențele
 ```bash
 pip install --upgrade pip
 pip install PySide6
 ```
 
-# 5. Instalează pachetele necesare pentru Qt (DOAR Linux – Ubuntu/Debian)
+ 5. Instalează pachetele necesare pentru Qt (DOAR Linux – Ubuntu/Debian)
 ```bash
 sudo apt update
 sudo apt install \
@@ -42,7 +42,7 @@ sudo apt install \
 ```
 Se execută o singură dată pe sistem, nu per proiect.
  
-# 6. Ruleaza aplicatia
+ 6. Ruleaza aplicatia
 ```bash
 python main.py
 ```
