@@ -7,9 +7,10 @@ class SeatWidget(QFrame):
 
     seat_clicked = Signal(object)
 
-    def __init__(self, seat, parent=None):
+    def __init__(self, seat, controller=None, parent=None):
         super().__init__(parent)
         self.seat = seat
+        self.controller = controller
         self.setAcceptDrops(True)
         self.setFixedSize(60, 60)
         self.setFrameStyle(QFrame.Box | QFrame.Raised)
@@ -109,9 +110,33 @@ class SeatWidget(QFrame):
         self.update_appearance()
 
     def dropEvent(self, event):
-        if event.mimeData().hasText() and event.mimeData().text().startswith("guest:"):
-            guest_id = event.mimeData().text().split(":")[1]
-            event.acceptProposedAction()
-            # Notify parent about the drop
-            self.parent().parent().parent().move_guest_to_seat(guest_id, self.seat)
+        """Handle drop event when a guest is dropped on this seat"""
+        if event.mimeData().hasText():
+            try:
+                text = event.mimeData().text()
+                
+                # Parse the guest ID from "guest:12345" format
+                if text.startswith("guest:"):
+                    guest_id = text.split(":", 1)[1]  # Extract the ID part after "guest:"
+                    
+                    # Use the controller reference instead of navigating parents
+                    if self.controller and hasattr(self.controller, 'move_guest_to_seat'):
+                        self.controller.move_guest_to_seat(guest_id, self.seat)
+                        event.accept()
+                        self.update_appearance()  # Update the visual appearance
+                    else:
+                        print("ERROR: No controller available for move_guest_to_seat")
+                        event.ignore()
+                else:
+                    print(f"ERROR: Invalid MIME data format: {text}")
+                    event.ignore()
+                        
+            except (ValueError, AttributeError) as e:
+                print(f"Error in dropEvent: {e}")
+                traceback.print_exc()
+                event.ignore()
+        else:
+            event.ignore()
+            
+        # Reset appearance after drag operation
         self.update_appearance()
