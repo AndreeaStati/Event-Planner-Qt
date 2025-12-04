@@ -225,9 +225,9 @@ class MainWindow(QMainWindow):
             row_label.setStyleSheet("font-weight: bold; color: #424242;")
             row_layout.addWidget(row_label)
 
-            # Seats in the row
+            # Seats in the row - PASS CONTROLLER (self) HERE
             for seat in sorted(rows_dict[row], key=lambda s: s.number):
-                seat_widget = SeatWidget(seat)
+                seat_widget = SeatWidget(seat, controller=self)  # <-- FIX: Added controller=self
                 seat_widget.seat_clicked.connect(self.seat_clicked)
                 row_layout.addWidget(seat_widget)
 
@@ -236,6 +236,7 @@ class MainWindow(QMainWindow):
             self.seats_layout.addWidget(row_container)
 
         self.seats_layout.addStretch()
+
 
     def update_event_info(self):
         if not self.current_event:
