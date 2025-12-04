@@ -1,0 +1,98 @@
+/* General background */
+QMainWindow {
+    background-color: #F5F5F5;
+}
+
+/* QPushButton styling */
+QPushButton {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+QPushButton:hover {
+    background-color: #1976D2;
+}
+QPushButton:pressed {
+    background-color: #0D47A1;
+}
+
+/* Special buttons */
+QPushButton#deleteButton {
+    background-color: #F44336;
+}
+QPushButton#removeButton {
+    background-color: #FF9800;
+}
+
+/* Group boxes */
+QGroupBox {
+    font-weight: bold;
+    border: 2px solid #BDBDBD;
+    border-radius: 5px;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px;
+}
+
+/* Labels */
+QLabel {
+    font-size: 14px;
+    color: #212121;
+}
+
+/* Scroll area */
+QScrollArea {
+    border: none;
+}
+
+/* List widgets */
+QListWidget {
+    background-color: white;
+    border: 1px solid #E0E0E0;
+    border-radius: 5px;
+}
+
+/* Legend labels */
+QLabel#legendAvailable {
+    background-color: #E0E0E0;
+    padding: 5px;
+    border-radius: 3px;
+}
+QLabel#legendOccupied {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+}
+QLabel#legendReserved {
+    background-color: #FFC107;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+/* Seat widgets */
+SeatWidget {
+    border: 1px solid #BDBDBD;
+    border-radius: 3px;
+    min-width: 40px;
+    min-height: 40px;
+    text-align: center;
+    background-color: #E0E0E0;
+}
+SeatWidget[status="occupied"] {
+    background-color: #4CAF50;
+    color: white;
+}
+SeatWidget[status="reserved"] {
+    background-color: #FFC107;
+}
+SeatWidget[status="available"] {
+    background-color: #E0E0E0;
+}
