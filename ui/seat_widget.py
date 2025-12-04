@@ -79,11 +79,13 @@ class SeatWidget(QFrame):
             self.seat_clicked.emit(self.seat)
 
             if self.seat.guest:
+                # Start drag operation
                 drag = QDrag(self)
                 mime_data = QMimeData()
                 mime_data.setText(f"guest:{id(self.seat.guest)}")
                 drag.setMimeData(mime_data)
 
+                # Create a pixmap for drag
                 pixmap = QPixmap(self.size())
                 self.render(pixmap)
                 drag.setPixmap(pixmap)
@@ -110,5 +112,6 @@ class SeatWidget(QFrame):
         if event.mimeData().hasText() and event.mimeData().text().startswith("guest:"):
             guest_id = event.mimeData().text().split(":")[1]
             event.acceptProposedAction()
+            # Notify parent about the drop
             self.parent().parent().parent().move_guest_to_seat(guest_id, self.seat)
         self.update_appearance()
