@@ -35,6 +35,7 @@ class EventDialog(QDialog):
             print("STEP 2 OK")
             self.input_date_time.setDateTime(QDateTime.currentDateTime())
             print("STEP 3 OK")
+            #self.input_date_time.setCalendarPopup(True)
             print("STEP 4 OK")
             print("input_date_time created")
 
