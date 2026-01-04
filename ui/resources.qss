@@ -81,8 +81,8 @@ QLabel#legendReserved {
 SeatWidget {
     border: 1px solid #BDBDBD;
     border-radius: 3px;
-    min-width: 40px;
-    min-height: 40px;
+    min-width: 30px;
+    min-height: 30px;
     text-align: center;
     background-color: #E0E0E0;
 }
