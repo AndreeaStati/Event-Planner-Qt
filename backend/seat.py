@@ -1,9 +1,9 @@
 from .guest import Guest
 
 class Seat:
-    def __init__(self, row, number):
-        self.row = row
-        self.number = number
+    def __init__(self, table_number, seat_number):
+        self.table_number = table_number  
+        self.number = seat_number
         self.guest = None
         self.reserved = False
     
@@ -23,11 +23,11 @@ class Seat:
             self.guest = None
 
     def get_identifier(self):
-        return f"R{self.row}-S{self.number}"
+        return f"Masa {self.table_number} - Loc {self.number}"
 
     def to_dict(self):
         return {
-            'row': self.row,
+            'row': self.table_number,
             'number': self.number,
             'guest': self.guest.to_dict() if self.guest else None,
             'reserved': self.reserved
@@ -40,6 +40,3 @@ class Seat:
         if data.get('guest'):
             seat.guest = Guest.from_dict(data['guest'])
         return seat
-
-
-
