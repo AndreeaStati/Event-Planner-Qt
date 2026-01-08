@@ -11,17 +11,16 @@ from PySide6.QtWidgets import (
     QGridLayout, QListWidgetItem, QFileDialog
 )
 from PySide6.QtGui import QDrag, QPixmap, QPainter, QColor, QCloseEvent
-from PySide6.QtCore import Qt, QMimeData, QPoint
+from PySide6.QtCore import Qt, QMimeData, QPoint 
+
 from backend.guest import Guest
+
 from ui.seat_widget import SeatWidget
 from ui.event_dialog import EventDialog
 from ui.guest_dialog import GuestDialog
 
-
 class GuestListWidget(QListWidget):
-    """
-        Lista personalizata care gestioneaza vizual operatiunea de Drag & Drop.
-    """
+  
     def mimeData(self, items):
         mime = QMimeData()
         if items:
@@ -34,23 +33,24 @@ class GuestListWidget(QListWidget):
         item = self.currentItem()
         if not item:
             return
-
+            
         mime_data = self.mimeData([item])
         drag = QDrag(self)
         drag.setMimeData(mime_data)
 
         text = item.text()
-        rect_width = len(text) * 8 + 20
+        rect_width = len(text) * 8 + 20 
         pixmap = QPixmap(rect_width, 30)
+        
         pixmap.fill(Qt.transparent)
 
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.Antialiasing)
-
+        
         painter.setBrush(QColor("white"))
-        painter.setPen(QColor("#2196F3"))
-        painter.drawRoundedRect(0, 0, rect_width - 2, 28, 5, 5)
-
+        painter.setPen(QColor("#2196F3")) 
+        painter.drawRoundedRect(0, 0, rect_width-2, 28, 5, 5)
+        
         painter.setPen(Qt.black)
         painter.drawText(pixmap.rect(), Qt.AlignCenter, text)
         painter.end()
@@ -60,14 +60,13 @@ class GuestListWidget(QListWidget):
 
         drag.exec(supportedActions)
 
-
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
         self.events = load_data()
         self.current_event = None
-        self.guest_map = {}
+        self.guest_map = {} 
 
         self.setWindowTitle("Event Planner")
         self.setGeometry(100, 100, 1400, 800)
@@ -78,16 +77,18 @@ class MainWindow(QMainWindow):
             with open("ui/resources.qss", "r") as f:
                 self.setStyleSheet(f.read())
         except FileNotFoundError:
-            print("resources.qss not found")
-
+            print("resources.qss not found, default style will be used")
+        
         self.update_events_list()
 
     def init_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
+
         main_layout = QHBoxLayout()
 
         left_panel = self.create_left_panel()
+
         right_panel = self.create_right_panel()
 
         splitter = QSplitter(Qt.Horizontal)
@@ -98,9 +99,10 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(splitter)
         central_widget.setLayout(main_layout)
-
+    
     def closeEvent(self, event: QCloseEvent):
         save_data(self.events)
+        
         event.accept()
 
     def create_left_panel(self):
@@ -125,7 +127,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(btn_delete_event)
 
         btn_save = QPushButton("Save Changes")
-        btn_save.setStyleSheet("background-color: #4CAF50; color: white;")
+        btn_save.setStyleSheet("background-color: #4CAF50; color: white;") # Verde
         btn_save.clicked.connect(lambda: save_data(self.events))
         layout.addWidget(btn_save)
 
@@ -163,17 +165,14 @@ class MainWindow(QMainWindow):
         return panel
 
     def import_guests_from_file(self):
-        """
-        Parseaza un fisier text si extrage automat nume, email si telefon folosind Regex.
-        """
         if not self.current_event:
             QMessageBox.warning(self, "Warning", "Please select an event first!")
             return
 
         file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Select Guest List",
-            "",
+            self, 
+            "Select Guest List", 
+            "", 
             "Text Files (*.txt);;All Files (*)"
         )
 
@@ -188,8 +187,8 @@ class MainWindow(QMainWindow):
             for line in lines:
                 line = line.strip()
                 if not line:
-                    continue
-
+                    continue 
+                
                 email = ""
                 email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', line)
                 if email_match:
@@ -197,15 +196,15 @@ class MainWindow(QMainWindow):
                     line = line.replace(email, "").strip()
 
                 phone = ""
-                phone_match = re.search(r'\+?\d{6,}', line)
+                phone_match = re.search(r'\+?\d{6,}', line) 
                 if phone_match:
                     phone = phone_match.group(0)
                     line = line.replace(phone, "").strip()
 
                 raw_name = " ".join(line.split())
-
+                
                 if not raw_name:
-                    continue
+                    continue 
 
                 name_parts = raw_name.split()
                 if len(name_parts) >= 2:
@@ -221,7 +220,7 @@ class MainWindow(QMainWindow):
 
             self.update_unassigned_guests_list()
             self.update_event_info()
-
+            
             QMessageBox.information(self, "Success", f"Successfully imported {count} guests!")
 
         except Exception as e:
@@ -275,8 +274,7 @@ class MainWindow(QMainWindow):
     def update_events_list(self):
         self.events_list.clear()
         for event in self.events:
-            date_str = event.date_time.strftime("%d.%m.%Y %H:%M") if isinstance(event.date_time, datetime) else str(
-                event.date_time)
+            date_str = event.date_time.strftime("%d.%m.%Y %H:%M") if isinstance(event.date_time, datetime) else str(event.date_time)
             self.events_list.addItem(f"{event.name} - {date_str}")
 
     def update_unassigned_guests_list(self):
@@ -286,16 +284,14 @@ class MainWindow(QMainWindow):
                 item = QListWidgetItem(guest.get_full_name())
                 unique_id = f"guest:{id(guest)}"
                 item.setData(Qt.UserRole, unique_id)
+                
                 self.guests_list.addItem(item)
 
     def handle_guest_drop(self, guest_id_str, target_seat):
+        print(f"DEBUG: MainWindow a primit cererea de mutare pentru ID: {guest_id_str}")
         self.move_guest_to_seat(guest_id_str, target_seat)
 
     def update_seating_map(self):
-        """
-        Randeaza vizual sala.
-        Calculeaza pozitia meselor in grid si a scaunelor in cerc (trigonometrie).
-        """
         while self.seats_layout.count():
             item = self.seats_layout.takeAt(0)
             if item.widget():
@@ -314,12 +310,15 @@ class MainWindow(QMainWindow):
 
         tables_container = QWidget()
         tables_grid = QGridLayout()
-
+        
         tables_grid.setAlignment(Qt.AlignTop | Qt.AlignLeft)
-        tables_grid.setHorizontalSpacing(40)
+        
+        tables_grid.setHorizontalSpacing(40) 
+        
         tables_grid.setVerticalSpacing(10)
+        
         tables_grid.setContentsMargins(10, 10, 10, 50)
-
+        
         tables_container.setLayout(tables_grid)
 
         tables_dict = {}
@@ -328,18 +327,18 @@ class MainWindow(QMainWindow):
                 tables_dict[seat.table_number] = []
             tables_dict[seat.table_number].append(seat)
 
-        FRAME_SIZE = 200
+        FRAME_SIZE = 200        
         CENTER_X = FRAME_SIZE // 2
         CENTER_Y = FRAME_SIZE // 2
-
-        TABLE_RADIUS = 45
-        CHAIR_SIZE = 30
-        GAP = 10
+        
+        TABLE_RADIUS = 45       
+        CHAIR_SIZE = 30         
+        GAP = 10                
         PLACEMENT_RADIUS = TABLE_RADIUS + GAP + (CHAIR_SIZE // 2)
 
         row_idx = 0
         col_idx = 0
-        MAX_TABLES_PER_ROW = 4
+        MAX_TABLES_PER_ROW = 4  
 
         for table_num in sorted(tables_dict.keys()):
             table_frame = QFrame()
@@ -350,7 +349,7 @@ class MainWindow(QMainWindow):
             lbl_table.setAlignment(Qt.AlignCenter)
             lbl_table.setFixedSize(TABLE_RADIUS * 2, TABLE_RADIUS * 2)
             lbl_table.move(CENTER_X - TABLE_RADIUS, CENTER_Y - TABLE_RADIUS)
-
+            
             lbl_table.setStyleSheet(f"""
                 QLabel {{
                     background-color: #5D4037; 
@@ -363,12 +362,13 @@ class MainWindow(QMainWindow):
 
             seats_at_table = tables_dict[table_num]
             num_seats = len(seats_at_table)
-
+            
             if num_seats > 0:
                 angle_step = (2 * math.pi) / num_seats
 
                 for i, seat in enumerate(seats_at_table):
                     seat_widget = SeatWidget(seat, parent=table_frame)
+                    
                     seat_widget.setFixedSize(CHAIR_SIZE, CHAIR_SIZE)
                     seat_widget.setStyleSheet(f"""
                         SeatWidget {{
@@ -378,10 +378,10 @@ class MainWindow(QMainWindow):
                             max-height: {CHAIR_SIZE}px;
                         }}
                     """)
-
+                    
                     seat_widget.seat_clicked.connect(self.seat_clicked)
                     seat_widget.guest_dropped_on_seat.connect(self.handle_guest_drop)
-
+                    
                     current_angle = i * angle_step - (math.pi / 2)
                     center_chair_x = CENTER_X + PLACEMENT_RADIUS * math.cos(current_angle)
                     center_chair_y = CENTER_Y + PLACEMENT_RADIUS * math.sin(current_angle)
@@ -390,8 +390,8 @@ class MainWindow(QMainWindow):
                     pos_y = int(center_chair_y - (CHAIR_SIZE / 2))
 
                     seat_widget.move(pos_x, pos_y)
-
-                    seat_widget.update_appearance()
+                    
+                    seat_widget.update_appearance() 
                     current_style = seat_widget.styleSheet()
                     size_fix = f"""
                         QFrame {{
@@ -404,7 +404,7 @@ class MainWindow(QMainWindow):
                     seat_widget.show()
 
             tables_grid.addWidget(table_frame, row_idx, col_idx)
-
+            
             col_idx += 1
             if col_idx >= MAX_TABLES_PER_ROW:
                 col_idx = 0
@@ -412,7 +412,7 @@ class MainWindow(QMainWindow):
 
         self.seats_layout.addWidget(tables_container)
         self.seats_layout.addStretch()
-
+        
     def update_event_info(self):
         if not self.current_event:
             self.event_info_label.setText("Select an event to view details")
@@ -433,11 +433,17 @@ class MainWindow(QMainWindow):
 
     def add_event(self):
         try:
+            print("Opening EventDialog...")  # Debug
             dialog = EventDialog(self)
+            print("EventDialog created successfully")  # Debug
+            
             result = dialog.exec()
-
+            print(f"Dialog result: {result}")  # Debug
+            
             if result == QDialog.Accepted:
                 event = dialog.get_event()
+                print(f"Event received: {event}")  # Debug
+                
                 if event:
                     self.events.append(event)
                     self.update_events_list()
@@ -445,8 +451,10 @@ class MainWindow(QMainWindow):
                 else:
                     QMessageBox.warning(self, "Error", "All required fields must be filled!")
         except Exception as e:
+            print(f"ERROR in add_event: {e}")
+            traceback.print_exc()
             QMessageBox.critical(self, "Error", f"Failed to create event: {str(e)}")
-
+        
     def delete_event(self):
         index = self.events_list.currentRow()
         if index >= 0:
@@ -513,15 +521,11 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Warning", "Please select a guest to remove!")
 
     def seat_clicked(self, seat):
-        """
-        Gestioneaza click-ul pe scaun:
-        - Daca e ocupat: ofera eliberarea locului.
-        - Daca e liber: permite alocarea manuala a unui invitat.
-        """
         if not self.current_event:
             return
 
         if seat.guest:
+            # Seat is occupied - offer options
             reply = QMessageBox.question(
                 self,
                 "Seat Management",
@@ -536,10 +540,12 @@ class MainWindow(QMainWindow):
                 self.update_unassigned_guests_list()
                 self.update_event_info()
         else:
+            # Seat is free - manual allocation
             if not self.current_event.unassigned_guests:
                 QMessageBox.information(self, "Info", "There are no unassigned guests!")
                 return
 
+            # Dialog to select a guest
             dialog = QDialog(self)
             dialog.setWindowTitle("Assign Guest")
             layout = QVBoxLayout()
@@ -573,39 +579,40 @@ class MainWindow(QMainWindow):
                     self.update_event_info()
 
     def move_guest_to_seat(self, guest_id_str, target_seat):
-        """
-        Logica centrala de mutare:
-        Gaseste invitatul (din lista sau alt scaun) si il asigneaza locului tinta.
-        """
-        if not self.current_event:
-            return
+            if not self.current_event:
+                return
 
-        found_guest = None
+            found_guest = None
+            
+            if guest_id_str in self.guest_map:
+                found_guest = self.guest_map[guest_id_str]
+            
+            if not found_guest:
+                for g in self.current_event.unassigned_guests:
+                    if str(id(g)) == str(guest_id_str):
+                        found_guest = g
+                        print(f"DEBUG: Invitat gasit în lista neasignati: {g.get_full_name()}")
+                        break
+            
+            if not found_guest:
+                print(f"EROARE: Nu am gasit invitatul cu ID {guest_id_str}!")
+                return
 
-        if guest_id_str in self.guest_map:
-            found_guest = self.guest_map[guest_id_str]
+            if not target_seat.is_available():
+                QMessageBox.warning(self, "Ocupat", "Locul este deja ocupat.")
+                return
 
-        if not found_guest:
-            for g in self.current_event.unassigned_guests:
-                if str(id(g)) == str(guest_id_str):
-                    found_guest = g
-                    break
+            # Cazul A: Venea de pe alt scaun
+            if found_guest.assigned_seat:
+                found_guest.assigned_seat.release()
+                
+            if found_guest in self.current_event.unassigned_guests:
+                self.current_event.unassigned_guests.remove(found_guest)
+                print("DEBUG: Invitat sters din lista de neasignati.")
 
-        if not found_guest:
-            return
-
-        if not target_seat.is_available():
-            QMessageBox.warning(self, "Ocupat", "Locul este deja ocupat.")
-            return
-
-        if found_guest.assigned_seat:
-            found_guest.assigned_seat.release()
-
-        if found_guest in self.current_event.unassigned_guests:
-            self.current_event.unassigned_guests.remove(found_guest)
-
-        target_seat.assign_guest(found_guest)
-
-        self.update_seating_map()
-        self.update_unassigned_guests_list()
-        self.update_event_info()
+            target_seat.assign_guest(found_guest)
+            print(f"DEBUG: Invitat asignat la Masa {target_seat.table_number}, Loc {target_seat.number}")
+            
+            self.update_seating_map()
+            self.update_unassigned_guests_list()
+            self.update_event_info()
