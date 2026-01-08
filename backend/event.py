@@ -3,7 +3,6 @@ from .seat import Seat
 from .guest import Guest
 
 class Event:
-    """Class representing an event"""
 
     def __init__(self, name, date_time, location, num_rows=10, num_seats_per_row=10):
         self.name = name
@@ -16,29 +15,24 @@ class Event:
         self._initialize_seats()
 
     def _initialize_seats(self):
-        """Create all seats for the event"""
         self.seats = []
         for row in range(1, self.num_rows + 1):
             for number in range(1, self.num_seats_per_row + 1):
                 self.seats.append(Seat(row, number))
 
     def add_guest(self, guest: Guest):
-        """Add a guest to the list of unassigned guests"""
         self.unassigned_guests.append(guest)
 
     def get_seat(self, row, number):
-        """Return the seat at the specified position"""
         for seat in self.seats:
             if seat.row == row and seat.number == number:
                 return seat
         return None
 
     def get_occupied_seats_count(self):
-        """Return the number of occupied seats"""
         return sum(1 for seat in self.seats if not seat.is_available())
 
     def get_available_seats_count(self):
-        """Return the number of available seats"""
         return len(self.seats) - self.get_occupied_seats_count()
 
     def to_dict(self):

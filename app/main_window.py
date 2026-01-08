@@ -127,7 +127,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(btn_delete_event)
 
         btn_save = QPushButton("Save Changes")
-        btn_save.setStyleSheet("background-color: #4CAF50; color: white;") # Verde
+        btn_save.setStyleSheet("background-color: #4CAF50; color: white;") 
         btn_save.clicked.connect(lambda: save_data(self.events))
         layout.addWidget(btn_save)
 
@@ -433,16 +433,16 @@ class MainWindow(QMainWindow):
 
     def add_event(self):
         try:
-            print("Opening EventDialog...")  # Debug
+            print("Opening EventDialog...") 
             dialog = EventDialog(self)
-            print("EventDialog created successfully")  # Debug
+            print("EventDialog created successfully")  
             
             result = dialog.exec()
-            print(f"Dialog result: {result}")  # Debug
+            print(f"Dialog result: {result}")  
             
             if result == QDialog.Accepted:
                 event = dialog.get_event()
-                print(f"Event received: {event}")  # Debug
+                print(f"Event received: {event}")  
                 
                 if event:
                     self.events.append(event)
@@ -525,7 +525,6 @@ class MainWindow(QMainWindow):
             return
 
         if seat.guest:
-            # Seat is occupied - offer options
             reply = QMessageBox.question(
                 self,
                 "Seat Management",
@@ -540,12 +539,10 @@ class MainWindow(QMainWindow):
                 self.update_unassigned_guests_list()
                 self.update_event_info()
         else:
-            # Seat is free - manual allocation
             if not self.current_event.unassigned_guests:
                 QMessageBox.information(self, "Info", "There are no unassigned guests!")
                 return
 
-            # Dialog to select a guest
             dialog = QDialog(self)
             dialog.setWindowTitle("Assign Guest")
             layout = QVBoxLayout()
@@ -602,7 +599,6 @@ class MainWindow(QMainWindow):
                 QMessageBox.warning(self, "Ocupat", "Locul este deja ocupat.")
                 return
 
-            # Cazul A: Venea de pe alt scaun
             if found_guest.assigned_seat:
                 found_guest.assigned_seat.release()
                 

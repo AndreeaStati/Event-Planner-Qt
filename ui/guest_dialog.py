@@ -28,7 +28,6 @@ class GuestDialog(QDialog):
         layout.addRow("Email:", self.input_email)
         layout.addRow("Phone:", self.input_phone)
 
-        # Buttons
         btn_layout = QHBoxLayout()
         self.btn_add = QPushButton("Add")
         self.btn_cancel = QPushButton("Cancel")
